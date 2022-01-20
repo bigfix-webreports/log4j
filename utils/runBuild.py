@@ -77,7 +77,7 @@ def inject_css_file(css_file, index_data):
 
 def inject_js_file(js_file, index_data):
     js_file_path = build_path + (js_file if build_path[0] == '/' else js_file.replace('/', '\\'))
-    replace_string = '<script src="' + js_file + '">'
+    replace_string = '<script defer="defer" src="' + js_file + '">'
 
     try:
         with open(js_file_path, 'r') as file:
@@ -175,13 +175,13 @@ def main():
         index_data = index_file.read()
 
     # find and add css files 
-    pattern_css = '<link href="([a-zA-Z0-9/.]*.chunk.css)" rel="stylesheet">'
+    pattern_css = '<link href="([a-zA-Z0-9/.]*.css)" rel="stylesheet">'
     css_matches = re.findall(pattern_css, index_data)
     for match in css_matches:
         index_data = inject_css_file(match, index_data)
     
     # find and add js files 
-    pattern_js = '<script src="([a-zA-Z0-9/.-]*.js)"></script>'
+    pattern_js = '<script defer="defer" src="([a-zA-Z0-9/.-]*.js)"></script>'
     js_matches = re.findall(pattern_js, index_data)
     for match in js_matches:
         index_data = inject_js_file(match, index_data)
