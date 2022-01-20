@@ -38,10 +38,10 @@ export const Notification = ({title, message}) => {
                     </span>
                     {'Please activate the following analysis for up to date information:  '}
                     <a 
-                        href='<?relevance link href of bes fixlets whose (analysis flag of it AND mime field "x-fixlet-win11-eligibility" of it = "analysis" ) ?>' 
+                        href='<?relevance link href of fixlet whose (analysis flag of it AND name of it = "log4j2-scan results") of bes site whose (id of it = 3093)?>' 
                         // style={{fontSize: 'x-large'}}
                     >
-                        Log4J Analysis
+                        log4j2-scan results
                     </a> 
                 </div> 
 

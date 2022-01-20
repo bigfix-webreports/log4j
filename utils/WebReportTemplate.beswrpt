@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BESWebReport>
+	<Name>{{title}}</Name>
+	<Description></Description>
+	<Type>CustomReport</Type>
+	<Source>BigFix</Source>
+	<Data><![CDATA[
+
+<script type="text/javascript">
+	"use strict";
+
+    var bigfixUi = {
+        parent: window.parent.document,
+        child: document,
+        resize: null,
+    };
+
+    window.parent.document.getElementsByTagName("html")[0].setAttribute("style", "width: 100%; height: 100%; padding: 0; margin: 0;");
+	window.parent.document.getElementsByTagName("body")[0].setAttribute("style", "width: 100%; height: 100%; padding: 0; margin: 0; overflow: hidden;");
+    
+    window.parent.document.getElementById('wr_header').style.margin = 0;
+    window.parent.document.getElementById('wr_headertop').style.backgroundColor = '#000';
+    window.parent.document.getElementById('wr_logo').style.marginLeft = '16px';
+    window.parent.document.getElementById('wr_versionHeader').style.display = 'none';
+    window.parent.document.getElementById('wr_subnavigation').style.paddingBottom = '10px';
+	window.parent.document.getElementById("saveReport").style.display = 'none';
+	window.parent.document.getElementById("filterSection").style.display = 'none';
+	window.parent.document.getElementById("editSourceLink").style.display = 'none';
+    window.parent.document.getElementById('wr_mainpage').style.margin = 0;
+	window.parent.document.getElementById("wr_datapage").setAttribute("style", "margin: 0; font-size: 0;");
+    window.parent.document.getElementById("wr_reportSourceWrapper").setAttribute("style", "border: none; margin: 0;");
+
+    document.getElementById('wr_datapage').setAttribute("style", "padding: 0; height: auto;");
+
+    bigfixUi.resize = function () {
+        var parent = window.parent.document.documentElement;
+        var iframe = window.parent.document.getElementById("wr_reportSourceWrapper");
+        iframe.style.height = 0;
+        var h = parent.offsetHeight - Math.floor(iframe.getBoundingClientRect().top);
+        h -= 60;
+        iframe.style.height = h + 'px';
+    };
+    window.parent.document.getElementsByTagName("body")[0].onresize = bigfixUi.resize;
+    bigfixUi.resize();
+
+    window.isBrowserSupported = false;
+    if (typeof (fetch) === 'function') {
+        window.isBrowserSupported = true;
+    }
+</script>
+{{buildContents}}
+	]]>
+	</Data>
+</BESWebReport>

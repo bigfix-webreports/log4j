@@ -40,18 +40,14 @@ export const MainPage = ({computerData}) => {
     const [computerList, setComputerList] = useState(computerData);
     
     const propNames = {
-        // vulFileList: 'Vulnerable File List',
         scanVersion: 'Scanner Version',
         lastScanTime: 'Last Scan Time',
         vulnFileCount: 'Vulnerable',
         potVulnFileCount: 'Potentially Vulnerable',
         mitigatedFileCount: 'Mitigated',
         fileResultDetails: 'File Result Details',
-        // fileScanCount: 'File Scan Count',
         scanDuration: 'Scan Duration',
         versionsFound: 'Versions Found',
-        // numLogpressoMitigationFiles: 'Logpresso Mitigation Rollback File Count',
-        // logpressoMitigationRollbackFiles: 'Logpresso Mitigation Rollback Files',
     };
 
     const charts =  {
@@ -190,9 +186,9 @@ export const MainPage = ({computerData}) => {
         {field: 'vulnFileCount', label: propNames.vulnFileCount, style: {textAlign: 'center'}, sortable: true},
         {field: 'potVulnFileCount', label: propNames.potVulnFileCount, style: {textAlign: 'center'}, sortable: true},
         {field: 'mitigatedFileCount', label: propNames.mitigatedFileCount, style: {textAlign: 'center'}, sortable: true},
-        {field: 'fileResultDetails', label: propNames.fileResultDetails, style: {textAlign: 'center'}, sortable: true, renderHtml: (model) => {return (drawFileResultDetails(model))}},
-        {field: 'scanDuration', label: propNames.scanDuration, style: {textAlign: 'center'}, sortable: true},
         {field: 'versionsFound', label: propNames.versionsFound, style: {textAlign: 'center'}, sortable: true, renderHtml: (model) => {return (drawVersionsFound(model))}},
+        {field: 'scanDuration', label: propNames.scanDuration, style: {textAlign: 'center'}, sortable: true},
+        {field: 'fileResultDetails', label: propNames.fileResultDetails, style: {textAlign: 'center'}, sortable: true, renderHtml: (model) => {return (drawFileResultDetails(model))}},
     ];
 
     const drawName = (model) => {
@@ -235,11 +231,15 @@ export const MainPage = ({computerData}) => {
             versionCounts[v] = 1 + (versionCounts[v] || 0)
         });
 
-        const versionsArray = Object.entries(versionCounts)
+        let versionsArray = Object.entries(versionCounts)
+        versionsArray.sort((a, b) => {
+            return b[1] - a[1];
+          });
+
         return(
       
             <div>
-                { versionsArray.slice(0,3).map(item => <li>{item[0] +  (['n/a', '<none>'].includes(model.versionsFound[0])? '': ' (' + item[1] + ')')}</li>)}
+                { versionsArray.slice(0,3).map(item => <li>{item[0] +  (['n/a', '<none>'].includes(model.versionsFound[0])? '': ' (x' + item[1] + ')')}</li>)}
                 {
                     versionsArray.length > 3 && 
                     expandedRows.includes(model.computerid) && 
@@ -303,7 +303,7 @@ export const MainPage = ({computerData}) => {
     const summaryHeaders = [
         {field: 'color', renderHtml: (model) => {return (drawLegendColor(model))}}, 
         {field: 'field', label: charts[selectedChart] , style: {textAlign: 'center'}},
-        {field: 'count', label: 'Count', style: {textAlign: 'center'}, renderHtml: (model) => {return (drawCounts(model))}},
+        {field: 'count', label: (selectedChart === 'versionsFound'? 'Instance Count': 'Computer Count'), style: {textAlign: 'center'}, renderHtml: (model) => {return (drawCounts(model))}},
         {field: 'percentage', label: 'Percentage', style: {textAlign: 'center'}},
     ];
 

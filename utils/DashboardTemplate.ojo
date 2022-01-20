@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Copyright HCL Technologies Limited 2001, 2020 
+    BigFix
+-->
+<BES>
+    <Wizard>
+    <Title>{{title}}</Title>
+    <UIHooks NavBar="placeholder_navbar" LaunchType="placeholder_launchtype" Menu="placeholder_menu" RequiresAuthoring="placeholder_requires"></UIHooks>
+    <DefaultPage>Page1</DefaultPage>
+        <Page Name="Page1" DocType="HTML5">
+            <Title>{{title}}</Title>
+            <Head>
+                &#60;meta http-equiv=&#34;X-UA-Compatible&#34; content=&#34;IE=edge,chrome=1&#34; &#47;&#62;
+                &#60;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1&#34;&#62;
+            </Head>
+            <HTML>
+                <![CDATA[
+                <script>var currentImplementation = InsertUtilityDiv.toString(); 
+    if (currentImplementation && currentImplementation.indexOf("if (window.document.getElementsByName(\"TheUtilityScripts\").length == 0) {") > -1 && currentImplementation.indexOf("var tus = '<div id=\"TheUtilityScripts\" style=\"DISPLAY: none; LEFT: 0px; POSITION: absolute; TOP: 100%\">';") > -1) { 
+        // we override this function already available in the wizards.js file in order to apply the fix for the BFP-17843 defect. 
+        // the dashboard will use this InsertUtilityDiv version instead of the default one only if the standard function has not been fixed. 
+        function InsertUtilityDiv() { 
+            if (window.document.getElementById("TheUtilityScripts") == null) { 
+                var tus = '<div id="TheUtilityScripts" style="DISPLAY: none; LEFT: 0px; POSITION: absolute; TOP: 100%">'; 
+                tus += '<div id="ActivateAnalysisData" style="DISPLAY: none">'; 
+                tus += '	<BUTTON id="ButtonActivateAnalysis" type="button">Activate</BUTTON>'; 
+                tus += '    <div id="theActivateAnalysisIDList"></div>'; 
+                tus += '	<div id="theActivateAnalysisReactivateFlag"></div>'; 
+                tus += '	<div id="theActivateAnalysisDeactivateFlag"></div>'; 
+                tus += '	<div id="theActivateAnalysisSuccessFlag"></div>'; 
+                tus += '</div>'; 
+                tus += '<div id="StopActionData" style="DISPLAY: none">'; 
+                tus += '	<BUTTON id="ButtonStopAction" type="button">StopAction</BUTTON>'; 
+                tus += '    <div id="theStopActionIDList"></div>'; 
+                tus += '	<div id="theStopActionSuccessFlag"></div>'; 
+                tus += '	<div id="theSuppressWarningsFlag"></div>'; 
+                tus += '</div>'; 
+                tus += '<div id="RegisterRefreshHandlerData" style="DISPLAY: none">'; 
+                tus += '	<BUTTON id="ButtonRegisterRefreshHandler" type="button">RegisterRefresh</BUTTON>'; 
+                tus += '	<div id="theRegisterRefreshElementID"></div>'; 
+                tus += '	<div id="theRegisterRefreshSignalName"></div>'; 
+                tus += '</div>'; 
+                tus += '<div id="BrowseData" style="DISPLAY: none">'; 
+                tus += '	<BUTTON id="ButtonBrowse" type="button">Browse</BUTTON>'; 
+                tus += '	<div id="theBrowseExtension"></div>'; 
+                tus += '	<div id="theBrowseFilters"></div>'; 
+                tus += '	<div id="theBrowseForFolderFlag"></div>'; 
+                tus += '	<div id="theBrowseInitialPath"></div>'; 
+                tus += '	<div id="theBrowseFileMustExistFlag"></div>'; 
+                tus += '	<div id="theBrowsePathMustExistFlag"></div>'; 
+                tus += '	<div id="theBrowseNoValidateFlag"></div>'; 
+                tus += '	<div id="theBrowseHideReadOnlyFlag"></div>'; 
+                tus += '	<div id="theBrowseOverwritePromptFlag"></div>'; 
+                tus += '	<div id="theBrowseCreatePromptFlag"></div>'; 
+                tus += '	<div id="theBrowseNoReadOnlyReturnFlag"></div>'; 
+                tus += '	<div id="theBrowseNoTestFileCreateFlag"></div>'; 
+                tus += '	<div id="theBrowseAllowMultiSelectFlag"></div>'; 
+                tus += '	<div id="theBrowseResultCancelFlag"></div>'; 
+                tus += '	<div id="theBrowseResultFullPath"></div>'; 
+                tus += '</div>'; 
+                tus += '<div id="LoadPresentationData" style="DISPLAY: none">'; 
+                tus += '	<BUTTON id="ButtonLoadPresentation" type="button">LoadPresentation</BUTTON>'; 
+                tus += '	<xml id="thePresentationPath"></xml>'; 
+                tus += '	<xml id="thePresentationResult"></xml>'; 
+                tus += '</div>'; 
+                tus += '<div id="ScratchFileOpsData" style="DISPLAY: none">'; 
+                tus += '	<BUTTON id="ButtonScratchFileOps" type="button">ScratchFileOps</BUTTON>'; 
+                tus += '	<xml id="theScratchFileOperation"></xml>'; 
+                tus += '	<xml id="theScratchFileInputPath"></xml>'; 
+                tus += '	<xml id="theScratchFileOutputPath"></xml>'; 
+                tus += '	<xml id="theScratchFileRecurseFlag"></xml>'; 
+                tus += '	<xml id="theScratchFileResult"></xml>'; 
+                tus += '</div>'; 
+                tus += '<div id="ConnectionInfoData" style="DISPLAY: none">'; 
+                tus += '	<BUTTON id="GetConnectionInfo" type="button">GetConnectionInfo</BUTTON>'; 
+                tus += '	<div id="theConnectionInfoCurrentDSN"></div>'; 
+                tus += '	<div id="theConnectionInfoCurrentUser"></div>'; 
+                tus += '</div>'; 
+                tus += '</div>'; 
+                window.document.body.insertAdjacentHTML("afterBegin", tus); 
+            } 
+        } 
+   }</script>
+{{buildContents}}
+                ]]>
+            </HTML>
+        </Page>
+    </Wizard>
+</BES>
