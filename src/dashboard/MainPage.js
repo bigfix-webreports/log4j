@@ -4,8 +4,6 @@ import {AppContext} from './appContext';
 import { PropDoughnutChart } from './PropDoughnutChart';
 
 import {DataTable, Button, Dropdown, ExportIcon, EditIcon, Pagination, TextInput, useTheme } from '@bigfix-ui/core';
-import { colors } from '@material-ui/core';
-import { el } from 'date-fns/locale';
 
 export const MainPage = ({computerData}) => {
 
@@ -13,15 +11,11 @@ export const MainPage = ({computerData}) => {
     const [theme] = useTheme();
 
     // pagination data
-    const [rowsPerPage, setRowsPerPage] = useState(50);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
 
     const [filterObj, setFilterObj] = useState({})
-    
-    const createTableFilter = (result, chartType) => {
 
-
-    }
 
     // control table rows that have more than 3 results (expand, collapse)
     const [expandedRows, setExpandedRows] = useState([])
@@ -193,7 +187,7 @@ export const MainPage = ({computerData}) => {
 
     const drawName = (model) => {
         return(
-            <a href={"/webreports?page=SingleComputerReport&ComputerName=" + model.datasourceName + "/" + model.computerid}>{model.name}
+            <a href={"/webreports?page=SingleComputerReport&ComputerName=" + model.datasourceName + "/" + model.computerid} target="_blank">{model.name}
             </a>
         )
     }

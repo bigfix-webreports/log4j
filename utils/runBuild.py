@@ -2,6 +2,7 @@
 # It combines all of the output into a single file
 
 import os
+# from pathlib import Path
 from shutil import rmtree
 import re
 import sys
@@ -14,6 +15,7 @@ try:
     config_folder_path = script_path
     config_path = os.path.join(config_folder_path, 'conf.ini')
     print('')
+    print('    Project Path:  ' + project_path)
     print('     Script Path:  ' + script_path)
     config = configparser.ConfigParser()
     if not os.path.isfile(config_path):
@@ -21,41 +23,25 @@ try:
         sys.exit('0')
 
     config.read(config_path)
-    build_type = config[config_key]['Type'] 
-    title = config[config_key]['Title']
-    file_name = config[config_key]['FileName']
-    
-    if build_type == 'Dashboard':
-        uihoooks_navbar = config[config_key]['NavBar']
-        uihoooks_launchtype = config[config_key]['LaunchType']
-        uihoooks_requires = config[config_key]['RequiresAuthoring']
-        uihoooks_menu = config[config_key]['Menu']
-   
-    print('    Project Name:  ' + title)
-    print('    Project Type:  ' + build_type)
-    print('    Project Path:  ' + project_path)
-    print('       File name:  ' + file_name)
+    build_path = os.path.join(project_path, 'build')
+    index_html_path = os.path.join(build_path, 'index.html')
+    output_path = os.path.join(project_path, 'output')
+
+    #  create output folder
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    #  create output folder
+    # Path(build_path).mkdir(exist_ok=True)
+
+    print('   Output Folder: ' + output_path)
+    print(' Index.html path: ' + index_html_path)
     print('')
 
 except Exception as e:
     print('--ERR-- Cannot get input params: ' + str(e))
     sys.exit()
-
-try:
-    template_filepath = os.path.join(config_folder_path, ('WebReportTemplate.beswrpt' if build_type == 'Report' else 'DashboardTemplate.ojo'))
-    build_path = os.path.join(project_path, 'build')
-    index_html_path = os.path.join(build_path, 'index.html')
-
-    print('      Build path: ' + build_path)
-    print('   Template path: ' + template_filepath)
-    print(' Index.html path: ' + index_html_path)
-    print('')
-    build_output_path = os.path.join(build_path, file_name)
-
-except Exception as e:
-    print('--ERR-- Cannot set basic paths: ' + str(e))
-    sys.exit()
-
+   
 
 def inject_css_file(css_file, index_data):
 
@@ -74,10 +60,10 @@ def inject_css_file(css_file, index_data):
         print('--ERR-- Error with file:' + css_file_path + '  ' + str(e))
         sys.exit()
 
-
-def inject_js_file(js_file, index_data):
+def inject_js_file(js_file, index_data, defer):
     js_file_path = build_path + (js_file if build_path[0] == '/' else js_file.replace('/', '\\'))
-    replace_string = '<script defer="defer" src="' + js_file + '">'
+
+    replace_string = '<script ' + ('defer="defer" ' if defer else '') + 'src="' + js_file + '"></script>'
 
     try:
         with open(js_file_path, 'r') as file:
@@ -85,48 +71,61 @@ def inject_js_file(js_file, index_data):
 
         # we are using CDATA tags in the final dashboard or report so we have to escape any that might be in the js file
         js_data = js_data.replace(']]>', ']]]]><![CDATA[>')
-        index_data = index_data.replace(replace_string, ('<script>' + js_data))
+
+        #remove the existsing script tag but add the script at the end as it might be deferred
+        index_data = index_data.replace(replace_string, '')
+        index_data = index_data.replace('</body></html>', ('<script>' +js_data + '</script></body></html>'))
+
         print('   Injected file: ' + js_file_path)
+        print ('')
         return index_data
 
     except Exception as e:
         print('--ERR-- Error with file:' + js_file_path + '  ' + str(e))
         sys.exit()
-
-def inject_metadata(index_data):
+    
+def create_output_file(index_data, config_key ):
     try:
+        file_name = config[config_key]['FileName']
+        app_output_path = os.path.join(output_path, file_name)
+        build_type = config[config_key]['Type'] 
+        title = config[config_key]['Title']
+        
+        # Additional dashboard only hooks
+        if build_type == 'Dashboard':
+            uihoooks_navbar = config[config_key]['NavBar']
+            uihoooks_launchtype = config[config_key]['LaunchType']
+            uihoooks_requires = config[config_key]['RequiresAuthoring']
+            uihoooks_menu = config[config_key]['Menu']
+        
+        print('       App Title:  ' + title)
+        print('        App Type:  ' + build_type)
+
+        template_filepath = os.path.join(config_folder_path, ('WebReportTemplate.beswrpt' if build_type == 'Report' else 'DashboardTemplate.ojo'))
+        
         with open(template_filepath, 'r') as file:
             template_data = file.read()
-        
-        # add dashboard specific metadata
-        if build_type == 'Dashboard':
-            template_data = template_data.replace('placeholder_navbar', uihoooks_navbar)
-            template_data = template_data.replace('placeholder_launchtype', uihoooks_launchtype)
-            template_data = template_data.replace('placeholder_requires', uihoooks_requires)
-            template_data = template_data.replace('placeholder_menu', uihoooks_menu)
 
         template_data = template_data.replace('{{title}}', title)
         template_data = template_data.replace('{{buildContents}}', index_data)
         
-        print('')
-        print('  Added Metadata!')
-        return template_data
+        if build_type == 'Dashboard':
+            template_data = template_data.replace('{{NavBar}}', uihoooks_navbar)
+            template_data = template_data.replace('{{LaunchType}}', uihoooks_launchtype)
+            template_data = template_data.replace('{{RequiresAuthoring}}', uihoooks_requires)
+            template_data = template_data.replace('{{Menu}}', uihoooks_menu)
+        
+        print('        Metadata:  Added!')
 
-    except Exception as e:
-        print('--ERR-- Error adding metadata'   + str(e))
-        sys.exit()
-
-def create_output_file (data):
-    try:
         # write build output
-        with open(build_output_path, 'w') as file:
-            file.write(data)
+        with open(app_output_path, 'w') as file:
+            file.write(template_data)
         
-        print('  Output created: ' + build_output_path)
+        print('  Output created: ' + app_output_path)
         print('')
         
     except Exception as e:
-        print('--ERR-- Error creating output file:'  + str(e))
+        print('--ERR-- Error creating output file: '  + str(e))
         sys.exit()
 
 def preform_cleanup():
@@ -167,7 +166,6 @@ def preform_cleanup():
         print('--ERR-- Could not remove static folder'  + str(e))
         pass
 
-
 def main():
 
     # Read in the index file 
@@ -180,18 +178,25 @@ def main():
     for match in css_matches:
         index_data = inject_css_file(match, index_data)
     
-    # find and add js files 
+    # find and add js files -- new react scripts uses defer="defer", okld ones do not 
     pattern_js = '<script defer="defer" src="([a-zA-Z0-9/.-]*.js)"></script>'
     js_matches = re.findall(pattern_js, index_data)
-    for match in js_matches:
-        index_data = inject_js_file(match, index_data)
+    defer = True
 
-    # add metadata
-    template_data = inject_metadata(index_data)
-    create_output_file (template_data)
+    if len(js_matches) == 0:
+        pattern_js = '<script src="([a-zA-Z0-9/.-]*.js)"></script>'
+        js_matches = re.findall(pattern_js, index_data)
+        defer = False
+            
+    for match in js_matches:
+            index_data = inject_js_file(match, index_data, defer)
+
+    #  build all apps with their section
+    for config_key in config.sections():
+        create_output_file(index_data, config_key )
 
     # cleanup static folder and unnecessary files
-    preform_cleanup()
+    # preform_cleanup()
 
 if __name__ == '__main__':
     main()

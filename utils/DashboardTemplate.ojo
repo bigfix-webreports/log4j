@@ -6,7 +6,7 @@
 <BES>
     <Wizard>
     <Title>{{title}}</Title>
-    <UIHooks NavBar="placeholder_navbar" LaunchType="placeholder_launchtype" Menu="placeholder_menu" RequiresAuthoring="placeholder_requires"></UIHooks>
+    <UIHooks NavBar="{{NavBar}}" LaunchType="{{LaunchType}}" Menu="{{Menu}}" RequiresAuthoring="{{RequiresAuthoring}}"></UIHooks>
     <DefaultPage>Page1</DefaultPage>
         <Page Name="Page1" DocType="HTML5">
             <Title>{{title}}</Title>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useMemo} from 'react';
 
 import {AppContext} from './dashboard/appContext';
 import { MainPage as MainReport} from './dashboard/MainPage'; 
-import {fakeComputers} from './dashboard/fakeDataSet';
+// import {fakeComputers} from './dashboard/fakeDataSet';
 
 import { Notification } from './dashboard/Notification';
 
@@ -118,7 +118,10 @@ const App = () =>  {
 
     if (platform === 'browser')
     {
-      tempComputers = fakeComputers;
+      let fakeData = [];
+      // for browser debugging only
+      // fakeData =  fakeComputers
+      tempComputers = fakeData;
     }
     else 
     {
